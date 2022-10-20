@@ -105,21 +105,21 @@ from mmcv.parallel import MMDistributedDataParallel
 
 ## 4. Performance
 1. 결과 이미지
-- train set inference image
+- train set inference image  
 <img width='663' src='https://user-images.githubusercontent.com/105214855/196437313-de2d7965-0405-4e6d-aa60-ebfc1202c836.png'>
 
-- validation set inference image
+- validation set inference image  
 <img width='663' src='https://user-images.githubusercontent.com/105214855/196437383-5ef76bcb-0cbf-47dc-a1a5-d4fad0c44b9a.png'>
 
-- test set inference image
+- test set inference image  
 <img width='663' src='https://user-images.githubusercontent.com/105214855/196437489-d7a04a90-755c-4ce0-801a-4b44f2479d2d.png'>
 
 2. AP(Average Precision)
 - Mask RCNN 논문에 표기된 성능: AP = 35.7
-<img width="663" alt="Untitled (1)" src="https://user-images.githubusercontent.com/65541236/197061374-44dc501c-d1b8-4d7d-a398-33895a0e6e1f.png">
-- 프로젝트 최종 모델의 성능: AP = 36.6
+<img width="663" alt="Untitled (1)" src="https://user-images.githubusercontent.com/65541236/197061374-44dc501c-d1b8-4d7d-a398-33895a0e6e1f.png">  
+- 프로젝트 최종 모델의 성능: AP = 36.6  
 <img width="663" alt="Untitled (2)" src="https://user-images.githubusercontent.com/65541236/197061477-b735e88b-41d8-4080-ab05-2a5a1a0d44bb.png">
 
-3. PA(Pixel Accuracy)
-![그림1](https://user-images.githubusercontent.com/65541236/197062525-675c558c-03ed-4f29-b5a7-a2e9e5238d95.png)
+3. PA(Pixel Accuracy)  
+![그림1](https://user-images.githubusercontent.com/65541236/197062525-675c558c-03ed-4f29-b5a7-a2e9e5238d95.png)  
 위에서부터 각각 92%, 97%, 76%를 보임  
