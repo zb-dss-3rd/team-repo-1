@@ -18,11 +18,11 @@ MMDetection의 Mask RCNN을 구현하기 전, 학습 차원으로 구현한 모�
 
 결과 이미지
 
-- train set inference image
+- train set inference image  
     <img width='663' src='https://user-images.githubusercontent.com/65541236/197068643-79c1b5c9-726f-4c6f-be47-ce7bf4fed889.png'>
-- validation set inference image
+- validation set inference image  
     <img width='663' src='https://user-images.githubusercontent.com/65541236/197068740-6e3f21ce-82f5-4b04-8dae-3eee6ae0a1ff.png'>
-- test set inference image
+- test set inference image  
     <img width='663' src='https://user-images.githubusercontent.com/65541236/197068785-88f04ba1-89f1-4ef0-a9b1-10554dd80c7f.png'>
 
 ## 2. Mask RCNN (final_MaskRCNN.ipynb)
@@ -39,11 +39,11 @@ MMDetection의 Mask RCNN을 구현하기 전, 학습 차원으로 구현한 모�
 
 결과 이미지
 
-- train set inference image
+- train set inference image  
     <img width='663' src='https://user-images.githubusercontent.com/105214855/196437313-de2d7965-0405-4e6d-aa60-ebfc1202c836.png'>
-- validation set inference image
+- validation set inference image  
     <img width='663' src='https://user-images.githubusercontent.com/105214855/196437383-5ef76bcb-0cbf-47dc-a1a5-d4fad0c44b9a.png'>
-- test set inference image
+- test set inference image  
     <img width='663' src='https://user-images.githubusercontent.com/105214855/196437489-d7a04a90-755c-4ce0-801a-4b44f2479d2d.png'>
 
 ## 3. UNet
@@ -59,5 +59,5 @@ MMDetection의 Mask RCNN을 구현하기 전, 학습 차원으로 구현한 모�
 
 결과 이미지
 
-- train, validation set inference image
+- train, validation set inference image  
     <img width="663" alt="unet" src="https://user-images.githubusercontent.com/65541236/197068951-816704d9-f6e6-4df0-99e3-14e9a6003d90.png">
