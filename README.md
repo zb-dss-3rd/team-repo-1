@@ -1,182 +1,125 @@
-# Stagnant Water Detection
-## 도로 청소 로봇 개발을 위한 물 웅덩이 감지 프로젝트
-#### 제로베이스 데이터 사이언스 스쿨 3기 김영빈, 박재경
+# ****도로 청소 로봇 개발을 위한 물 웅덩이 감지 프로젝트****
 
-<br>
+제로베이스 데이터 스쿨 3기 김영빈, 박재경
 
-# 1. Discription
-## ✔ 주제
-  - 고여있는 물(형태가 일정하지 않은 물체) Segmentation
-## ✔ 기획 의도
-  - 도로 청소 로봇의 특성상 도로에 고여있는 물을 피해야하기 때문에 문제 발생
-  - 청소를 해야하는 쓰레기와 물 웅덩이를 구분지어 물 웅덩이만을 피할 수 있도록 물 웅덩이를 감지하는 모델 개발
-## ✔ Data Set
+### 목차
+
+1. [Description](#1-description)
+2. [Information](#2-information)
+3. [Models](#3-models)
+4. [Performance](#4-performance)
+
+## 1. Description
+
+- 주제: 고여있는 물(형태가 일정하지 않은 물체) Segmentation
+- 기획 의도
+    - 도로 청소 로봇의 특성상 도로에 고여있는 물을 피해야하기 때문에 문제 발생
+    - 청소를 해야하는 쓰레기와 물 웅덩이를 구분지어 물 웅덩이만을 피할 수 있도록 물 웅덩이를 감지하는 모델 개발
+- 제작 기간
+    - 2022.09.06 ~ 2022.10.19 총 43일간 진행
+    
+    | 일정 | 내용 |
+    | --- | --- |
+    | 09.06 ~ 09.30 | Data Labeling, Data Preprocessing |
+    | 10.01 ~ 10.11 | 모델링, 학습 및 평가
+    - Faster RCNN
+    - Mask RCNN (epoch = 12)
+    - UNet |
+    | 10.13 ~ 10.17 | 모델링, 학습 및 평가
+    - Mask RCNN (epoch = 24) |
+    | 10.19 | 최종 발표 |
+
+## 2. Information
+
+### 1. Environment
+
+> Colab Pro  
+Python: 3.7.15  
+GPU: K80, T4 or P100  
+RAM: 24.45GB  
+Pytorch: 1.12.1 cu113  
+> 
+
+### 2. Prerequisite
+
+> MMCV
+MMDetection  
+import os  
+import os.path as osp  
+import mmcv  
+from mmdet.apis import init_detector, inference_detector  
+from mmdet.apis import set_random_seed  
+from mmdet.apis import train_detector, show_results_pyplot  
+from mmdet.apis import multi_gpu_test, single_gpu_test  
+from mmdet.datasets.builder import DATASETS  
+from mmdet.datasets.coco import CocoDataset  
+from mmcv import Config  
+from mmdet.datasets import build_dataset, build_dataloader,  
+from mmdet.datasets import replace_ImageToTensor  
+from mmdet.models import build_detector  
+from mmcv.parallel import MMDataParallel   
+from mmcv.parallel import MMDistributedDataParallel
+> 
+
+### 3. Data Set
   |구분|내용|
   |-|-|
   |영상출처|https://www.youtube.com/watch?v=_e_bzlDej5U&list=WL&index=15&t=209s&ab_channel=물축꾸리|
   |길이|원본 영상(18분 40초) 중 필요한 부분 2분 43초로 잘라서 진행|
   |해상도|1280*720 px|
   |프레임|원본 30fps에서 10fps로 추출하여 라벨링 및 학습 실행, 총 1627프레임 사용|
-  
-## ✔ 환경
-  - Colab Pro 사용
-  - RAM : 고용량 RAM 설정(24.45GB)
-  
-## ✔ 프로젝트 일정
-  - 09.06 ~ 10.19 총 43일간 진행
-  
-  |일정|내용|
-  |-|-|
-  |09.06 ~ 09.30|Data Labeling, COCO dataset Preprocessing|
-  |10.01 ~ 10.11|모델링, 학습 및 평가 <br> - Faster RCNN <br> - Mask RCNN(epoch=12) <br> - UNet
-  |10.13 ~ 10.17|모델 구현, 학습 및 평가 <br> - Mask RCNN(epoch=24)|
-  |10.19|최종 발표|
 
-<br>
+### 4. Folders
 
-# 2. Model Architecture
-##### 최종 사용 모델은 Mask RCNN입니다.
-
-<br>
-
-## ✔ Mask RCNN
-![image](https://user-images.githubusercontent.com/105214855/196432598-a1369ce9-8261-4c87-8465-43b46279076e.png)
-
-Mask RCNN은 Object Detection에서 주로 사용되던 Faster RCNN에 Mask Branch를 추가한 모델입니다.
-
-이 Mask RCNN은 Classification, Bounding Box Regression, Predicting Object Mask를 동시에 처리합니다.
-
-아래는 Mask RCNN을 사용한 결과입니다.
-
-![image](https://user-images.githubusercontent.com/105214855/196433402-ef55df8d-603f-440f-96ad-b381f3d8dd2f.png)
-
-초록색 Bounding box와 확률, Masking이 된 결과물
-
-## ✔ 사용한 모델의 기본 사항
-##### 최종 모델은 epoch=24번이지만, 현재(10월 16일) 12번까지 완료되었기 때문에 epoch=12번 모델 기준으로 작성합니다.
-  |구분|내용|
-  |-|-|
-  |Framework|MMDetection|
-  |Back Bone|Resnet 101과 FPN 결합, pretained model 사용|
-  |Batchsize|16|
-  |Optimizer|SGD|
-  |Learning rate|0.0025|
-  |epoch|12, 24|
-  |Image Size|1280 x 720 원본 그대로 사용, model의 input size는 1333 x 800으로 여백은 검은색으로 자동 패딩되어 진행됨|
-  |학습 소요 시간|epoch 12 : 128min / epoch 24 : 254min|
-  
-
-##  ✔ Modeling
-
-- Config 설정 코드
 ```
-cfg.dataset_type = 'WATERDataset'
-cfg.data_root = '/content/drive/MyDrive/water detection/WATER_Dataset_coco/'
+├── data
+│   ├── Annotations
+│   │   ├── COCODataset          # MMDetection에 최적화된 COCODataset 형태의 json 파일
+│   │   └── OnetoOne             # 이미지와 일대일 대응되는 json 파일
+│   │       ├── test_json
+│   │       ├── train_json
+│   │       └── val_json
+│   └── Images
+│       ├── MaskImages           # 라벨링을 토대로 만든 마스킹 이미지
+│       │   ├── pixel_accuracy   # PA 계산을 진행한 3장의 이미지
+│       │   │   ├── mask         # 라벨링을 토대로 만든 마스킹 이미지
+│       │   │   ├── origin       # 모델이 예측한 이미지 (3차원)
+│       │   │   └── output       # 모델이 예측한 이미지 (1차원)
+│       │   ├── test
+│       │   ├── train
+│       │   │   └── mask_256     # (256, 256) 사이즈의 마스킹 이미지
+│       │   └── validation
+│       │       └── mask_256
+│       ├── OriginalImages       # 모델 학습에 사용한 원본 이미지
+│       └── Remainder            # 모델 학습에 사용하지 않은 나머지 이미지
+├── ipynb                        # 모델을 구현할 때 사용한 ipynb 파일들
+└── models                       # Mask RCNN 모델
 
-cfg.data.train.type = 'WATERDataset'
-cfg.data.train.data_root = '/content/drive/MyDrive/water detection/WATER_Dataset_coco/'
-cfg.data.train.ann_file = 'train.json'
-cfg.data.train.img_prefix = ''
-
-cfg.data.val.type = 'WATERDataset'
-cfg.data.val.data_root = '/content/drive/MyDrive/water detection/WATER_Dataset_coco/'
-cfg.data.val.ann_file = 'val.json'
-cfg.data.val.img_prefix = ''
-
-cfg.data.test.type = 'WATERDataset'
-cfg.data.test.data_root = '/content/drive/MyDrive/water detection/WATER_Dataset_coco/'
-cfg.data.test.ann_file = 'test.json'
-cfg.data.test.img_prefix = ''
-
-# class의 갯수 설정
-cfg.model.roi_head.bbox_head.num_classes = 2
-cfg.model.roi_head.mask_head.num_classes = 2
-
-# pretrained 모델
-cfg.load_from = '/content/drive/MyDrive/mmdetection/checkpoints/mask_rcnn_r101_fpn_1x_coco_20200204-1efe0ed5.pth'
-
-# 학습 weight 파일로 로그를 저장하기 위한 디렉토리 설정
-cfg.work_dir = '/content/drive/MyDrive/water detection/WATER_Dataset_coco/tutorial_exps'
-
-# 학습율 변경 환경 파라미터 설정
-cfg.optimizer.lr = 0.02 / 8
-cfg.lr_config.warmup = None
-cfg.log_config.interval = 10
-
-# CocoDataset의 경우 metric을 bbox로 설정(mAP아님. bbox로 설정하면 mAP를 iou threshold를 0.5 ~ 0.95까지 변경하면서 측정)
-cfg.evaluation.metric = ['bbox', 'segm']
-cfg.evaluation.interval = 12
-cfg.checkpoint_config.interval = 12
-
-# epoch 횟수 변경(기본값 = 12)
-cfg.runner.max_epochs = 12
-
-# 두번 config를 로드하면 lr_config의 policy가 사라지는 오류로 인하여 설정
-cfg.lr_config.policy='step'
-# Set seed thus the results are more reproducible
-cfg.seed = 0
-set_random_seed(0, deterministic=False)
-cfg.gpu_ids = range(1)
-
-# ConfigDict' object has no attribute 'device 오류 발생시 반드시 설정 필요 https://github.com/open-mmlab/mmdetection/issues/7901
-cfg.device='cuda'
 ```
 
-- Model Learning
-```
-mmcv.mkdir_or_exist(osp.abspath(cfg.work_dir))
-# epochs는 config의 runner 파라미터로 지정, 기본 12회 
-train_detector(model, datasets, cfg, distributed=False, validate=True)
-```
+## [3. Models](https://github.com/zb-dss-3rd/team-repo-1/tree/main/ipynb)
 
-<br>
+1. [Faster RCNN](https://github.com/zb-dss-3rd/team-repo-1/blob/main/ipynb/FasterRCNN.ipynb)
+2. [Mask RCNN: 최종 사용 모델](https://github.com/zb-dss-3rd/team-repo-1/blob/main/ipynb/final_MaskRCNN.ipynb)
+3. [UNet](https://github.com/zb-dss-3rd/team-repo-1/blob/main/ipynb/UNet.ipynb)
 
-# 3. 성과
-
-|구분|내용|
-|-|-|
-|Batch Size|코랩 버그로 인하여 1로 수행|
-|평가 소요 시간|이미지 1장 당 0.18s|
-
-## ✔ Evaluation
-```
-# config 수정, 코랩 버그로 인해 test set에서 batch size 1로 변경
-cfg.data.samples_per_gpu = 1
-
-# test용 Dataset과 DataLoader 생성
-dataset = build_dataset(cfg.data.test)
-data_loader = build_dataloader(dataset, samples_per_gpu=cfg.data.samples_per_gpu, workers_per_gpu=cfg.data.workers_per_gpu, dist=False, shuffle=False)
-
-# checkpoint 저장된 model 파일을 이용하여 모델을 생성
-checkpoint_file = '/content/drive/MyDrive/water detection/WATER_Dataset_coco/tutorial_exps/epoch_12.pth'
-model_ckpt = init_detector(cfg, checkpoint_file, device='cuda:0')
-
-model_ckpt = MMDataParallel(model_ckpt, device_ids=[0])
-# single_gpu_test() 를 호출하여 test데이터 세트의 interence 수행
-# 위에서 만든 show_test_output 디렉토리에 interence 결과가 시각화된 이미지 저장
-outputs = single_gpu_test(model_ckpt, data_loader, True, '/content/drive/MyDrive/water detection/WATER_Dataset_coco/show_test_output', 0.3)
-metric = dataset.evaluate(outputs, metric=['bbox', 'segm'])
-```
-
-## ✔ 결과 이미지
-
+## 4. Performance
+1. 결과 이미지
 - train set inference image
-![image](https://user-images.githubusercontent.com/105214855/196437313-de2d7965-0405-4e6d-aa60-ebfc1202c836.png)
-
+<img width='663' src='https://user-images.githubusercontent.com/105214855/196437313-de2d7965-0405-4e6d-aa60-ebfc1202c836.png'>
 
 - validation set inference image
-![image](https://user-images.githubusercontent.com/105214855/196437383-5ef76bcb-0cbf-47dc-a1a5-d4fad0c44b9a.png)
-
+<img width='663' src='https://user-images.githubusercontent.com/105214855/196437383-5ef76bcb-0cbf-47dc-a1a5-d4fad0c44b9a.png'>
 
 - test set inference image
-![image](https://user-images.githubusercontent.com/105214855/196437489-d7a04a90-755c-4ce0-801a-4b44f2479d2d.png)
+<img width='663' src='https://user-images.githubusercontent.com/105214855/196437489-d7a04a90-755c-4ce0-801a-4b44f2479d2d.png'>
 
-## ✔ 성능 지표 확인
+2. AP(Average Precision)
+- Mask RCNN 논문에 표기된 성능: AP = 35.7
+<img width="663" alt="Untitled (1)" src="https://user-images.githubusercontent.com/65541236/197061374-44dc501c-d1b8-4d7d-a398-33895a0e6e1f.png">
+- 프로젝트 최종 모델의 성능: AP = 36.6
+<img width="663" alt="Untitled (2)" src="https://user-images.githubusercontent.com/65541236/197061477-b735e88b-41d8-4080-ab05-2a5a1a0d44bb.png">
 
-![image](https://user-images.githubusercontent.com/105214855/196437597-f805ac09-1146-40a7-8789-d6d8d1e177e5.png)
-
-![image](https://user-images.githubusercontent.com/105214855/196437701-833cf049-a6b3-450e-ad1c-8953511fe30f.png)
-
-Mask RCNN 논문에서 밝힌 mask AP는 35.7로, Mask RCNN이 나오기 이전에 대회에서 우승한 모델의 성능보다 높습니다. 
-
-이와 비교했을 때, **저희가 학습한 모델의 mask AP는 34.9**로 논문에서의 성능과 비슷한 정도입니다. 추후 epoch를 24번으로 늘려 성능이 조금 더 개선될 수 있다고 예상하고 있습니다.
+3. PA(Pixel Accuracy)
+![그림1](https://user-images.githubusercontent.com/65541236/197062525-675c558c-03ed-4f29-b5a7-a2e9e5238d95.png)
+위에서부터 각각 92%, 97%, 76%를 보임  
